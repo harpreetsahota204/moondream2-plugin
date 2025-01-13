@@ -130,7 +130,7 @@ class Moondream2(Model):
         for idx, point in enumerate(points):
 
             keypoint = Keypoint(
-                label=f"{label}_{idx+1}",
+                label=f"{label}",
                 points=[[point["x"], point["y"]]]
             )
 
@@ -149,7 +149,7 @@ class Moondream2(Model):
         """
         result = self.model.caption(image, length=self.params["length"])["caption"]
 
-        return {"caption": result}
+        return result
 
     def _predict_query(self, image: Image.Image) -> Dict[str, str]:
         """Answer a visual query about an image.
@@ -162,7 +162,7 @@ class Moondream2(Model):
         """
         result = self.model.query(image, self.params["query_text"])["answer"]
 
-        return {"answer": result}
+        return result
 
     def _predict_detect(self, image: Image.Image) -> Dict[str, Detections]:
         """Detect objects in an image.
@@ -177,7 +177,7 @@ class Moondream2(Model):
 
         detections = self._convert_to_detections(result, self.params["object_type"])
 
-        return {"detections": detections}
+        return detections
 
     def _predict_point(self, image: Image.Image) -> Dict[str, Keypoints]:
         """Identify point locations of objects in an image.
@@ -192,7 +192,7 @@ class Moondream2(Model):
 
         keypoints = self._convert_to_keypoints(result, self.params["object_type"])
 
-        return {"keypoints": keypoints}
+        return keypoints
 
     def _predict(self, image: Image.Image) -> Dict[str, Any]:
         """Process a single image with Moondream2.
