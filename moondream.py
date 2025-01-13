@@ -44,18 +44,14 @@ class Moondream2(Model):
     
     Args:
         operation (str): Type of operation to perform
-        model_name (str): Name of the model to load from HuggingFace
         revision (str, optional): Model revision/tag to use
-        device (str, optional): Device to run the model on ('cuda', 'mps', or 'cpu')
         **kwargs: Operation-specific parameters
     """
 
     def __init__(
         self, 
         operation: str,
-        model_name: str = "vikhyatk/moondream2",
         revision: Optional[str] = None,
-        device: Optional[str] = None,
         **kwargs
     ):
         self.operation = operation
@@ -73,11 +69,11 @@ class Moondream2(Model):
         self.params = kwargs
 
         # Set device
-        self.device = device or get_device()
+        self.device = get_device()
 
         # Initialize model
         self.model = AutoModelForCausalLM.from_pretrained(
-            model_name,
+            "vikhyatk/moondream2",
             revision=revision,
             trust_remote_code=True,
             device_map={"": self.device},
@@ -233,9 +229,7 @@ def run_moondream_model(
     dataset: fo.Dataset,
     operation: str,
     output_field: str,
-    model_name: str = "vikhyatk/moondream2",
     revision: Optional[str] = None,
-    device: Optional[str] = None,
     **kwargs
 ) -> None:
     """Apply Moondream2 operations to a FiftyOne dataset.
@@ -244,16 +238,12 @@ def run_moondream_model(
         dataset: FiftyOne dataset to process
         operation: Type of operation to perform
         output_field: Field to store results in
-        model_name: Name of the model to load from HuggingFace
         revision: Model revision/tag to use
-        device: Device to run the model on
         **kwargs: Operation-specific parameters
     """
     model = Moondream2(
         operation=operation,
-        model_name=model_name,
         revision=revision,
-        device=device,
         **kwargs
     )
     dataset.apply_model(model, label_field=output_field)
