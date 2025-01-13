@@ -99,6 +99,7 @@ class Moondream2(Model):
             FiftyOne Detections object
         """
         detections = []
+
         for box in boxes:
             detection = Detection(
                 label=label,
@@ -109,6 +110,7 @@ class Moondream2(Model):
                     box["y_max"] - box["y_min"]   # height
                 ]
             )
+
             detections.append(detection)
         
         return Detections(detections=detections)
@@ -124,14 +126,73 @@ class Moondream2(Model):
             FiftyOne Keypoints object
         """
         keypoints = []
+
         for idx, point in enumerate(points):
+
             keypoint = Keypoint(
                 label=f"{label}_{idx+1}",
                 points=[[point["x"], point["y"]]]
             )
+
             keypoints.append(keypoint)
         
         return Keypoints(keypoints=keypoints)
+
+    def _predict_caption(self, image: Image.Image) -> Dict[str, str]:
+        """Generate a caption for an image.
+        
+        Args:
+            image: PIL image
+            
+        Returns:
+            dict: Caption result
+        """
+        result = self.model.caption(image, length=self.params["length"])["caption"]
+
+        return {"caption": result}
+
+    def _predict_query(self, image: Image.Image) -> Dict[str, str]:
+        """Answer a visual query about an image.
+        
+        Args:
+            image: PIL image
+            
+        Returns:
+            dict: Query answer
+        """
+        result = self.model.query(image, self.params["query_text"])["answer"]
+
+        return {"answer": result}
+
+    def _predict_detect(self, image: Image.Image) -> Dict[str, Detections]:
+        """Detect objects in an image.
+        
+        Args:
+            image: PIL image
+            
+        Returns:
+            dict: Detection results
+        """
+        result = self.model.detect(image, self.params["object_type"])["objects"]
+
+        detections = self._convert_to_detections(result, self.params["object_type"])
+
+        return {"detections": detections}
+
+    def _predict_point(self, image: Image.Image) -> Dict[str, Keypoints]:
+        """Identify point locations of objects in an image.
+        
+        Args:
+            image: PIL image
+            
+        Returns:
+            dict: Keypoint results
+        """
+        result = self.model.point(image,self.params["object_type"])["points"]
+
+        keypoints = self._convert_to_keypoints(result, self.params["object_type"])
+
+        return {"keypoints": keypoints}
 
     def _predict(self, image: Image.Image) -> Dict[str, Any]:
         """Process a single image with Moondream2.
@@ -142,41 +203,19 @@ class Moondream2(Model):
         Returns:
             dict: Operation results
         """
-        if self.operation == "caption":
-            result = self.model.caption(
-                image, 
-                length=self.params["length"]
-            )["caption"]
-            return {"caption": result}
+        prediction_methods = {
+            "caption": self._predict_caption,
+            "query": self._predict_query,
+            "detect": self._predict_detect,
+            "point": self._predict_point
+        }
+        
+        predict_method = prediction_methods.get(self.operation)
 
-        elif self.operation == "query":
-            result = self.model.query(
-                image,
-                self.params["query_text"]
-            )["answer"]
-            return {"answer": result}
-
-        elif self.operation == "detect":
-            result = self.model.detect(
-                image,
-                self.params["object_type"]
-            )["objects"]
-            detections = self._convert_to_detections(
-                result, 
-                self.params["object_type"]
-            )
-            return {"detections": detections}
-
-        elif self.operation == "point":
-            result = self.model.point(
-                image,
-                self.params["object_type"]
-            )["points"]
-            keypoints = self._convert_to_keypoints(
-                result,
-                self.params["object_type"]
-            )
-            return {"keypoints": keypoints}
+        if predict_method is None:
+            raise ValueError(f"Unknown operation: {self.operation}")
+            
+        return predict_method(image)
 
     def predict(self, image: np.ndarray) -> Dict[str, Any]:
         """Process an image array with Moondream2.
