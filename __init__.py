@@ -19,7 +19,8 @@ def _handle_calling(
         revision,
         operation,
         output_field,
-        delegate=False
+        delegate=False,
+        **kwargs
         ):
     ctx = dict(dataset=sample_collection)
 
@@ -27,7 +28,8 @@ def _handle_calling(
         model_name=revision,
         operation=operation,
         output_field=output_field,
-        delegate=delegate
+        delegate=delegate,
+        **kwargs
         )
     return foo.execute_operator(uri, ctx, params=params)
 
