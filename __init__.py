@@ -16,19 +16,17 @@ with add_sys_path(os.path.dirname(os.path.abspath(__file__))):
 def _handle_calling(
         uri, 
         sample_collection, 
-        model_name,
-        bbox_field,
+        revision,
+        operation,
         output_field,
-        confidence_threshold,
         delegate=False
         ):
     ctx = dict(dataset=sample_collection)
 
     params = dict(
-        model_name=model_name,
-        bbox_field=bbox_field,
+        model_name=revision,
+        operation=operation,
         output_field=output_field,
-        confidence_threshold=confidence_threshold,
         delegate=delegate
         )
     return foo.execute_operator(uri, ctx, params=params)
