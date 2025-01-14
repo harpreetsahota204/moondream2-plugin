@@ -83,6 +83,9 @@ class MoondreamOperator(foo.Operator):
 
         revision_dropdown = types.Dropdown(label="Which revision would you like to use?")
 
+        for revision in MOONDREAM_REVISIONS:  # Add the available revisions
+            revision_dropdown.add_choice(revision, label=revision)
+
         inputs.enum(
             "revision",
             values=revision_dropdown.values(),
