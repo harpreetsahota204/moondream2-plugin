@@ -78,8 +78,8 @@ class MoondreamOperator(foo.Operator):
 
         mode_dropdown = types.Dropdown(label="What would you like to use Moondream2 for?")
         
-        for arch_key, arch_value in MOONDREAM_MODES.items():
-            mode_dropdown.add_choice(arch_value, label=arch_key)
+        for k, v in MOONDREAM_MODES.items():
+            mode_dropdown.add_choice(k, label=v)
 
         revision_dropdown = types.Dropdown(label="Which revision would you like to use?")
 
@@ -117,6 +117,7 @@ class MoondreamOperator(foo.Operator):
                 label="Caption Length",
                 description="Which caption type would you like?",
                 required=True,
+                values=length_radio.values(),
                 view=length_radio
             )
 
