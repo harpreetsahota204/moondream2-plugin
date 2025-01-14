@@ -136,7 +136,7 @@ moondream_operator(
 ```
 
 
-If using delegated operation in an notebook, first run: `!fiftyone delegated launch` and then use `await` with any of the operations.
+If using delegated operation in an notebook, first run: `fiftyone delegated launch` and then use `await` with any of the operations.
 
 ```python
 await moondream_operator(
