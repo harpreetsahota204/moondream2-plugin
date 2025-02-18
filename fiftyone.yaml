@@ -1,6 +1,6 @@
 name: "@harpreetsahota/moondream2"
 description: Run Moondream2 Models from Hugging Face on your FiftyOne Dataset
-version: 1.0.0
+version: 1.0.1
 fiftyone:
   version: "*"
 url: https://github.com/harpreetsahota204/moondream2-plugin

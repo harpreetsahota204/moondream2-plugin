@@ -8,10 +8,7 @@ from fiftyone.core.utils import add_sys_path
 import fiftyone.operators as foo
 from fiftyone.operators import types
 
-with add_sys_path(os.path.dirname(os.path.abspath(__file__))):
-    from moondream import (
-        run_moondream_model
-    )
+from .moondream import run_moondream_model
 
 def _handle_calling(
         uri, 
