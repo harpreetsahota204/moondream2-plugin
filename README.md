@@ -31,9 +31,13 @@ The plugin provides a seamless interface to Moondream2's capabilities within Fif
 If you haven't already, install FiftyOne and required dependencies:
 
 ```bash
-pip install -U fiftyone transformers torch
+pip install -U fiftyone transformers torch pvips
 ```
+On Ubuntu you may need to also install the pvips libraries
 
+```bash
+sudo apt install imagemagick libvips
+```
 
 Then, install the plugin:
 
